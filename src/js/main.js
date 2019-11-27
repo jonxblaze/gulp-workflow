@@ -1,3 +1,3 @@
 jQuery(document).ready(function($) {
-  console.log("MAIN.JS");
+  console.log("MAIN.JS..HELLLO");
 });

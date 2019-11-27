@@ -1,75 +1,86 @@
 var gulp = require("gulp"),
-  sass = require("gulp-sass"),
-  postcss = require("gulp-postcss"),
-  autoprefixer = require("autoprefixer"),
-  cssnano = require("cssnano"),
-  sourcemaps = require("gulp-sourcemaps"),
-  gulpCopy = require("gulp-copy"),
-  browserSync = require("browser-sync").create();
+    sass = require("gulp-sass"),
+    postcss = require("gulp-postcss"),
+    autoprefixer = require("autoprefixer"),
+    cssnano = require("cssnano"),
+    sourcemaps = require("gulp-sourcemaps"),
+    gulpCopy = require("gulp-copy"),
+    concat = require("gulp-concat"),
+    uglify = require("gulp-uglify"),
+    rename = require("gulp-rename"),
+    browserSync = require("browser-sync").create();
 
+// Let's define the paths to our SCSS & JS files
 var paths = {
-  styles: {
-    // By using styles/**/*.sass we're telling gulp to check all folders for any sass file
-    src: "src/scss/*.scss",
-    // Compiled files will end up in whichever folder it's found in (partials are not compiled)
-    dest: "dist/assets/css"
-  }
+    styles: {
+        // Grab these .scss files
+        src: "src/scss/*.scss",
+        reset: "src/scss/resets/*.scss",
 
-  // Easily add additional paths
-  // ,html: {
-  //  src: '...',
-  //  dest: '...'
-  // }
+        // Compiled files will be saved in the Dist folder
+        dest: "dist/assets/css"
+    },
+
+    js: {
+        src: "src/js/*.js",
+        dest: "dist/assets/js"
+    }
 };
 
+// 
 function style() {
-  return (
-    gulp
-      .src(paths.styles.src)
-      // Initialize sourcemaps before compilation starts
-      .pipe(sourcemaps.init())
-      .pipe(sass())
-      .on("error", sass.logError)
-      // Use postcss with autoprefixer and compress the compiled file using cssnano
-      .pipe(postcss([autoprefixer(), cssnano()]))
-      // Now add/write the sourcemaps
-      .pipe(sourcemaps.write())
-      .pipe(gulp.dest(paths.styles.dest))
-      // Add browsersync stream pipe after compilation
-      .pipe(browserSync.stream())
-  );
+    return (
+        gulp
+        .src([paths.styles.reset, paths.styles.src])
+        // Initialize sourcemaps before compilation starts
+        .pipe(sourcemaps.init())
+        .pipe(sass())
+        .on("error", sass.logError)
+        // Use postcss with autoprefixer and compress the compiled file using cssnano
+        .pipe(postcss([autoprefixer(), cssnano()]))
+        // Now add/write the sourcemaps
+        .pipe(sourcemaps.write())
+        .pipe(concat("style.min.css"))
+        .pipe(gulp.dest(paths.styles.dest))
+        // Add browsersync stream pipe after compilation
+        .pipe(browserSync.stream())
+    );
 }
 
-// Copy JS files from src folder to dist folder
+// Minify and Copy JS files from src folder to dist folder
 function copyJs() {
-  return gulp
-    .src("src/js/*.js")
-    .pipe(gulpCopy("dist/assets/js", { prefix: 2 }));
+    return gulp
+        .src(paths.js.src)
+        .pipe(sourcemaps.init())
+        .pipe(uglify())
+        .pipe(rename("main.min.js"))
+        .pipe(sourcemaps.write("."))
+        .pipe(gulp.dest(paths.js.dest));
 }
 
 // A simple task to reload the page
 function reload() {
-  browserSync.reload();
+    browserSync.reload();
 }
 
 // Add browsersync initialization at the start of the watch task
 function watch() {
-  browserSync.init({
-    // You can tell browserSync to use this directory and serve it as a mini-server
-    server: {
-      baseDir: "./dist"
-    }
-    // If you are already serving your website locally using something like apache
-    // You can use the proxy setting to proxy that instead
-    // proxy: "yourlocal.dev"
-  });
-  gulp.watch(paths.styles.src, style);
-  // We should tell gulp which files to watch to trigger the reload
-  // This can be html or whatever you're using to develop your website
+    browserSync.init({
+        // You can tell browserSync to use this directory and serve it as a mini-server
+        server: {
+            baseDir: "./dist"
+        }
+        // If you are already serving your website locally using something like apache
+        // You can use the proxy setting to proxy that instead
+        // proxy: "yourlocal.dev"
+    });
+    gulp.watch(paths.styles.src, style);
+    // We should tell gulp which files to watch to trigger the reload
+    // This can be html or whatever you're using to develop your website
 
-  gulp
-    .watch(["dist/*.html", "src/js/*.js"], copyJs)
-    .on("change", browserSync.reload);
+    gulp
+        .watch(["dist/*.html", paths.js.src], copyJs)
+        .on("change", browserSync.reload);
 }
 
 // We don't have to expose the reload function
