@@ -1,0 +1,34 @@
+{
+  "name": "gulp-workflow",
+  "version": "1.0.0",
+  "description": "A Gulp workflow to make a developer's life easy.",
+  "main": "index.js",
+  "scripts": {
+    "start": "gulp"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/jonxblaze/gulp-workflow.git"
+  },
+  "keywords": [
+    "gulp"
+  ],
+  "author": "Jon Bulda",
+  "license": "ISC",
+  "devDependencies": {
+    "autoprefixer": "^9.7.2",
+    "browser-sync": "^2.26.7",
+    "cssnano": "^4.1.10",
+    "gulp": "^4.0.2",
+    "gulp-postcss": "^8.0.0",
+    "gulp-sass": "^4.0.2",
+    "gulp-sourcemaps": "^2.6.5"
+  },
+  "bugs": {
+    "url": "https://github.com/jonxblaze/gulp-workflow/issues"
+  },
+  "homepage": "https://github.com/jonxblaze/gulp-workflow#readme",
+  "dependencies": {
+    "gulp-copy": "^4.0.1"
+  }
+}
