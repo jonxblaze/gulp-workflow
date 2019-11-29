@@ -1,3 +1,5 @@
 jQuery(document).ready(function($) {
-  console.log("MAIN.JS..HELLLO");
+  for (i = 0; i < 15; i++) {
+    console.log("Hello World");
+  }
 });
