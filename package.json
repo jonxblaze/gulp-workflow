@@ -1,37 +1,25 @@
 {
-  "name": "gulp-workflow",
-  "version": "1.0.0",
-  "description": "A Gulp workflow to make a developer's life easy.",
+  "name": "gulp",
+  "version": "1.0.1",
+  "description": "Task runner for all our SCSS and javascript files",
   "main": "index.js",
   "scripts": {
     "start": "gulp"
   },
-  "repository": {
-    "type": "git",
-    "url": "git+https://github.com/jonxblaze/gulp-workflow.git"
-  },
-  "keywords": [
-    "gulp"
-  ],
-  "author": "Jon Bulda",
+  "author": "Jon Blaze",
   "license": "ISC",
   "devDependencies": {
-    "autoprefixer": "^9.7.2",
-    "browser-sync": "^2.29.3",
-    "cssnano": "^4.1.10",
+    "autoprefixer": "^10.4.13",
     "gulp": "^4.0.2",
+    "gulp-clean-css": "^4.3.0",
     "gulp-concat": "^2.6.1",
-    "gulp-postcss": "^8.0.0",
-    "gulp-rename": "^1.4.0",
-    "gulp-sass": "^4.0.2",
-    "gulp-sourcemaps": "^2.6.5",
-    "gulp-uglify": "^3.0.2"
-  },
-  "bugs": {
-    "url": "https://github.com/jonxblaze/gulp-workflow/issues"
-  },
-  "homepage": "https://github.com/jonxblaze/gulp-workflow#readme",
-  "dependencies": {
-    "gulp-copy": "^4.0.1"
+    "gulp-notify": "^4.0.0",
+    "gulp-postcss": "^9.0.1",
+    "gulp-sass": "^5.1.0",
+    "gulp-sass-partials-imported": "^1.0.7",
+    "gulp-sourcemaps": "^3.0.0",
+    "gulp-uglify": "^3.0.2",
+    "postcss": "^8.1.0",
+    "sass": "^1.69.5"
   }
 }
