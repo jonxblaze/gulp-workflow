@@ -1,103 +1,82 @@
-var gulp = require("gulp"),
-    sass = require("gulp-sass"),
-    postcss = require("gulp-postcss"),
-    autoprefixer = require("autoprefixer"),
-    cssnano = require("cssnano"),
-    sourcemaps = require("gulp-sourcemaps"),
-    gulpCopy = require("gulp-copy"),
-    concat = require("gulp-concat"),
-    uglify = require("gulp-uglify"),
-    rename = require("gulp-rename"),
-    browserSync = require("browser-sync").create();
+const gulp = require("gulp"),
+      sass = require('gulp-sass')(require('sass')),
+      postcss = require("gulp-postcss"),
+      cleanCSS = require('gulp-clean-css'),
+      autoprefixer = require("autoprefixer"),
+      sourcemaps = require("gulp-sourcemaps"),
+      concat = require("gulp-concat"),
+      uglify = require("gulp-uglify"),
+      notify = require('gulp-notify');
+
 
 // Let's define the paths to our SCSS & JS files
-var paths = {
+const paths = {
     styles: {
         // Grab these .scss files
-        src: "src/scss/*.scss",
-        reset: "src/scss/resets/*.scss",
+        src: "src/scss/**/*",
 
-        // Compiled files will be saved in the Dist folder
-        dest: "dist/assets/css"
+        // Compiled files will be saved in the root folder of our WordPress theme
+        dest: "assets/style"
     },
 
     js: {
-        src: "src/js/*.js",
-        dest: "dist/assets/js"
+        src: "src/js/*",
+        dest: "assets/js"
     }
 };
 
-// 
+// Process all our SCSS files, concatenate, and save to destination folder
 function style() {
-    return (
-        gulp
-        .src([paths.styles.reset, paths.styles.src])
-        // Initialize sourcemaps before compilation starts
-        .pipe(sourcemaps.init())
-        .pipe(sass())
-        .on("error", sass.logError)
-        // Use postcss with autoprefixer and compress the compiled file using cssnano
-        .pipe(postcss([autoprefixer(), cssnano()]))
-        // Now add/write the sourcemaps
-        .pipe(sourcemaps.write())
-        .pipe(concat("style.min.css"))
-        .pipe(gulp.dest(paths.styles.dest))
-        // Add browsersync stream pipe after compilation
-        .pipe(browserSync.stream())
-    );
-}
-
-// Minify and Copy JS files from src folder to dist folder
-function copyJs() {
-    return gulp
-        .src(paths.js.src)
-        .pipe(sourcemaps.init())
-        .pipe(uglify())
-        .pipe(rename("main.min.js"))
-        .pipe(sourcemaps.write("."))
-        .pipe(gulp.dest(paths.js.dest));
-}
-
-// A simple task to reload the page
-function reload() {
-    browserSync.reload();
-}
-
-// Add browsersync initialization at the start of the watch task
-function watch() {
-    browserSync.init({
-        // You can tell browserSync to use this directory and serve it as a mini-server
-        server: {
-            baseDir: "./dist"
-        }
-        // If you are already serving your website locally using something like apache
-        // You can use the proxy setting to proxy that instead
-        // proxy: "yourlocal.dev"
-    });
-    gulp.watch(paths.styles.src, style);
-    // We should tell gulp which files to watch to trigger the reload
-    // This can be html or whatever you're using to develop your website
-
+  return (
     gulp
-        .watch(["dist/*.html", paths.js.src], copyJs)
-        .on("change", browserSync.reload);
+    .src([paths.styles.src])
+    .pipe(sourcemaps.init())
+    .pipe(sass())
+    .on("error", sass.logError)
+    .pipe(postcss([autoprefixer()]))
+    .pipe(cleanCSS({compatibility: 'ie8'}))
+    .pipe(sourcemaps.write())
+    .pipe(concat("style.min.css"))
+    .pipe(gulp.dest(paths.styles.dest))
+    .pipe(notify({ message: "CSS updated and minified! - " + Date.now(), onLast: true }))
+  );
 }
 
-// We don't have to expose the reload function
-// It's currently only useful in other functions
+// Process all our JavaScript files, concatenate, and save to destination folder
+function js() {
+  return gulp
+    .src(paths.js.src)
+    .pipe(sourcemaps.init())
+    .pipe(uglify())
+    .pipe(concat("main.min.js"))
+    .pipe(sourcemaps.write("."))
+    .pipe(gulp.dest(paths.js.dest))
+    .pipe(notify({ message: "JavaScript file updated! - " + Date.now(), onLast: true }))
+}
+
+ // We should tell gulp which files to watch
+function watch() {
+  let cssWatcher = gulp.watch( [ paths.styles.src ] );
+  let jsWatcher = gulp.watch( [ paths.js.src ] );
+
+  jsWatcher.on('change', js);
+  cssWatcher.on('change', style);
+}
 
 // Don't forget to expose the task!
 exports.watch = watch;
 
 // Expose the task by exporting it
-// This allows you to run it from the commandline using
+// This allows you to run it from the command line using
 // $ gulp style
 exports.style = style;
+
+exports.js = js;
 
 /*
  * Specify if tasks run in series or parallel using `gulp.series` and `gulp.parallel`
  */
-var build = gulp.parallel(style, watch, copyJs);
+const build = gulp.parallel( watch );
 
 /*
  * You can still use `gulp.task` to expose tasks

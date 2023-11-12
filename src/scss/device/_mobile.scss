@@ -1,0 +1,10 @@
+/*** Responsive Styles Smartphone Only ***/
+@include respond(mobile) {
+
+}
+
+/*** Responsive Styles Smartphone Portrait ***/
+@include respond(mobile-portrait) {
+  
+}
+

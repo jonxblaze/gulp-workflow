@@ -1,24 +1,3 @@
-$primary-color: #fff;
-$primary-bg: #333;
-$font: "Arial";
-body {
-    font-family: $font;
-    color: $primary-color;
-    background: $primary-bg;
-    margin: 0;
-    padding: 0;
-    h1 {
-        color: yellow;
-        font-size: 2em;
-        margin-bottom: .5em
-    }
-    p {
-        margin-bottom: 1.5em
-    }
-}
-
-.wrapper {
-    max-width: 1200px;
-    margin: 0 auto;
-    padding: 2em;
-}
+@import './global';
+@import './device/tablet';
+@import './device/mobile'; 
