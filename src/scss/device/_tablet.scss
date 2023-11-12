@@ -1,0 +1,10 @@
+/*** Responsive Styles Tablet Only ***/
+@include respond(tablet) {
+ 
+}
+
+
+/*** Responsive styles for large tablets like iPad Pro ***/
+@include respond(tablet-xl) {
+ 
+}
